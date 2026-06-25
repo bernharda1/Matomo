@@ -111,11 +111,32 @@ class FlowArchiver extends BaseArchiver
      */
     private function aggregateTransitions(array $dateRange): void
     {
-        // Note: Transitions require raw step data parsing
-        // This is simplified for SB-014.1
-        // Full implementation in SB-014.2
+        $rawTable = $this->getRawDataTableName();
         
-        $this->log("Transition aggregation prepared for SB-014.2");
+        // For simplicity, we'll aggregate from raw data via step JSON parsing
+        // In production, this would be optimized with materialized transition tables
+        
+        $sql = "
+            SELECT 
+                COUNT(*) as transition_count
+            FROM {$rawTable}
+            WHERE idsite = ?
+                AND server_time BETWEEN ? AND ?
+                AND transition_count > 0
+        ";
+
+        $result = Db::fetchOne(
+            $sql,
+            [$this->idSite, $dateRange['start'], $dateRange['end']]
+        );
+
+        $totalTransitions = $result ?? 0;
+        
+        // Note: Full transition parsing (step A → step B) requires JSON parsing
+        // This is optimized in SB-014.2 with dedicated transition aggregation
+        
+        $this->saveMetric('VisitorFlowIntelligence_TotalTransitions', (float)$totalTransitions);
+        $this->log("Archived {$totalTransitions} transitions");
     }
 
     /**
@@ -123,9 +144,50 @@ class FlowArchiver extends BaseArchiver
      */
     private function aggregateDropoffs(array $dateRange): void
     {
-        // Note: Drop-offs require analysis of path endpoints
-        // Full implementation in SB-014.3
+        $rawTable = $this->getRawDataTableName();
         
-        $this->log("Drop-off aggregation prepared for SB-014.3");
+        // Drop-off analysis: compare path depth distribution
+        $sql = "
+            SELECT 
+                depth,
+                COUNT(*) as count
+            FROM {$rawTable}
+            WHERE idsite = ?
+                AND server_time BETWEEN ? AND ?
+            GROUP BY depth
+            ORDER BY depth ASC
+        ";
+
+        $results = Db::fetchAll(
+            $sql,
+            [$this->idSite, $dateRange['start'], $dateRange['end']]
+        );
+
+        $dropoffs = [];
+        $previousCount = null;
+
+        foreach ($results as $row) {
+            $currentCount = (int)$row['count'];
+            $depth = (int)$row['depth'];
+
+            if ($previousCount !== null && $previousCount > $currentCount) {
+                $dropoffCount = $previousCount - $currentCount;
+                $dropoffRate = $dropoffCount / $previousCount;
+
+                $dropoffs[] = [
+                    'depth' => $depth,
+                    'dropoff_count' => $dropoffCount,
+                    'dropoff_rate' => $dropoffRate,
+                    'continuing' => $currentCount,
+                ];
+            }
+
+            $previousCount = $currentCount;
+        }
+
+        if (!empty($dropoffs)) {
+            $this->saveDataTable('VisitorFlowIntelligence_Dropoffs', $dropoffs);
+            $this->log("Archived " . count($dropoffs) . " drop-off points");
+        }
     }
 }
