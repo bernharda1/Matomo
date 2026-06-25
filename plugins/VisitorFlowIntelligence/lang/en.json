@@ -1,0 +1,19 @@
+{
+  "VisitorFlowIntelligence": {
+    "PluginName": "Visitor Flow Intelligence",
+    "MenuTitle": "Visitor Flow",
+    "ReportTitle": "Visitor Flow Report",
+    "ReportIntro": "Top paths, transitions and drop-offs for the selected site and period.",
+    "TopPaths": "Top Paths",
+    "Path": "Path",
+    "Share": "Share",
+    "DropoffAtStep": "Drop-off at Step",
+    "TopTransitions": "Top Transitions",
+    "Transition": "Transition",
+    "TransitionRate": "Transition Rate",
+    "Dropoffs": "Drop-offs",
+    "DropoffCount": "Drop-off Count",
+    "DropoffRate": "Drop-off Rate",
+    "MaxDepth": "Max Depth"
+  }
+}

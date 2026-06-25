@@ -1,0 +1,81 @@
+<div class="device-intelligence">
+    <h2>{{ title|translate }}</h2>
+
+    <p>{{ 'DeviceIntelligence_ReportIntro'|translate }}</p>
+
+    <p>
+        <strong>{{ 'General_Website'|translate }}:</strong> {{ currentFilters.idSite }} |
+        <strong>{{ 'General_Period'|translate }}:</strong> {{ currentFilters.period }} |
+        <strong>{{ 'General_Date'|translate }}:</strong> {{ currentFilters.date }}
+    </p>
+
+    <form method="get" style="margin-bottom: 16px;">
+        <input type="hidden" name="module" value="DeviceIntelligence" />
+        <input type="hidden" name="action" value="index" />
+        <input type="hidden" name="idSite" value="{{ currentFilters.idSite }}" />
+        <input type="hidden" name="period" value="{{ currentFilters.period }}" />
+        <input type="hidden" name="date" value="{{ currentFilters.date }}" />
+
+        <label for="uadata-input"><strong>{{ 'DeviceIntelligence_ClientHintsInput'|translate }}</strong></label>
+        <textarea id="uadata-input" name="uadata" rows="6" style="width: 100%; max-width: 900px;">{{ currentFilters.uaDataRaw }}</textarea>
+        <br />
+        <button type="submit" class="btn">{{ 'DeviceIntelligence_ProcessClientHints'|translate }}</button>
+    </form>
+
+    {% if errorMessage %}
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+    {% endif %}
+
+    {% if payload %}
+        <p>
+            <strong>{{ 'General_ColumnNbVisits'|translate }}:</strong> {{ payload.meta.totalVisits }}
+        </p>
+
+        <table class="entityTable dataTable">
+            <thead>
+            <tr>
+                <th>{{ 'DeviceIntelligence_Dimension'|translate }}</th>
+                <th>{{ 'DeviceIntelligence_UnknownCount'|translate }}</th>
+                <th>{{ 'DeviceIntelligence_KnownCount'|translate }}</th>
+                <th>{{ 'DeviceIntelligence_UnknownRate'|translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in payload.dimensions %}
+                <tr>
+                    <td>{{ ('DeviceIntelligence_Dimension_' ~ row.dimension)|translate }}</td>
+                    <td>{{ row.unknownCount }}</td>
+                    <td>{{ row.knownCount }}</td>
+                    <td>{{ (row.unknownRate * 100)|number_format(1, '.', '') }}%</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">{{ 'General_NoDataForGraph'|translate }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if payload.clientHintsMapping %}
+            <h3>{{ 'DeviceIntelligence_ClientHintsMapped'|translate }}</h3>
+            <table class="entityTable dataTable">
+                <thead>
+                <tr>
+                    <th>{{ 'DeviceIntelligence_Dimension'|translate }}</th>
+                    <th>{{ 'General_Value'|translate }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><td>{{ 'DeviceIntelligence_Dimension_deviceType'|translate }}</td><td>{{ payload.clientHintsMapping.deviceType }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_Dimension_brand'|translate }}</td><td>{{ payload.clientHintsMapping.brand }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_Dimension_model'|translate }}</td><td>{{ payload.clientHintsMapping.model }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_Dimension_osName'|translate }}</td><td>{{ payload.clientHintsMapping.osName }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_OsVersion'|translate }}</td><td>{{ payload.clientHintsMapping.osVersion }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_Dimension_browserName'|translate }}</td><td>{{ payload.clientHintsMapping.browserName }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_BrowserVersion'|translate }}</td><td>{{ payload.clientHintsMapping.browserVersion }}</td></tr>
+                <tr><td>{{ 'DeviceIntelligence_ClientHintsPresent'|translate }}</td><td>{{ payload.clientHintsMapping.clientHintsPresent ? 'yes' : 'no' }}</td></tr>
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+</div>

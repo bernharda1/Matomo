@@ -1,0 +1,19 @@
+{
+  "GeoPrecision": {
+    "PluginName": "Geo Precision",
+    "MenuTitle": "Geo Confidence",
+    "ReportTitle": "Geo Confidence Report",
+    "ReportIntro": "Geographic data quality and confidence scoring overview.",
+    "AvgConfidenceScore": "Average Confidence Score",
+    "ConfidenceDistribution": "Confidence Level Distribution",
+    "ConfidenceLevel": "Confidence Level",
+    "Dimension": "Dimension",
+    "DimensionCoverage": "Dimension Coverage",
+    "KnownCount": "Known Count",
+    "UnknownCount": "Unknown Count",
+    "KnownRate": "Known Rate",
+    "ConsentStatus": "Consent Status",
+    "ConsentGranted": "Granted (Precise Data Enabled)",
+    "ConsentDenied": "Not Granted (Country-Level Only)"
+  }
+}

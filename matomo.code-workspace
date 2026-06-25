@@ -1,0 +1,16 @@
+{
+    // Infinitysuite360 Workspace
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        // Add your workspace-specific settings here
+    },
+    "extensions": {
+        "recommendations": [
+            // Add extension IDs here, e.g. "dbaeumer.vscode-eslint"
+        ]
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "DeviceIntelligence": {
+    "PluginName": "Device Intelligence",
+    "MenuTitle": "Device Quality",
+    "ReportTitle": "Device Quality Report",
+    "ReportIntro": "Unknown-rate quality overview across core device dimensions.",
+    "Dimension": "Dimension",
+    "UnknownCount": "Unknown Count",
+    "KnownCount": "Known Count",
+    "UnknownRate": "Unknown Rate",
+    "ClientHintsInput": "Client Hints (uadata JSON)",
+    "ProcessClientHints": "Process Client Hints",
+    "ClientHintsMapped": "Mapped Client Hints Dimensions",
+    "ClientHintsPresent": "Client Hints Present",
+    "OsVersion": "OS Version",
+    "BrowserVersion": "Browser Version",
+    "Dimension_deviceType": "Device Type",
+    "Dimension_brand": "Brand",
+    "Dimension_model": "Model",
+    "Dimension_osName": "Operating System",
+    "Dimension_browserName": "Browser",
+    "Dimension_resolution": "Resolution"
+  }
+}

@@ -1,0 +1,95 @@
+<div class="geo-precision">
+    <h2>{{ title|translate }}</h2>
+
+    <p>{{ 'GeoPrecision_ReportIntro'|translate }}</p>
+
+    {% if consentNotice %}
+        <div class="alert alert-info">
+            {{ consentNotice }}
+        </div>
+    {% endif %}
+
+    <p>
+        <strong>{{ 'General_Website'|translate }}:</strong> {{ currentFilters.idSite }} |
+        <strong>{{ 'General_Period'|translate }}:</strong> {{ currentFilters.period }} |
+        <strong>{{ 'General_Date'|translate }}:</strong> {{ currentFilters.date }} |
+        <strong>{{ 'GeoPrecision_ConsentStatus'|translate }}:</strong>
+        {% if currentFilters.hasConsent %}
+            <span style="color: green;">{{ 'GeoPrecision_ConsentGranted'|translate }}</span>
+        {% else %}
+            <span style="color: orange;">{{ 'GeoPrecision_ConsentDenied'|translate }}</span>
+        {% endif %}
+    </p>
+
+    {% if errorMessage %}
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+    {% endif %}
+
+    {% if payload %}
+        <p>
+            <strong>{{ 'General_ColumnNbVisits'|translate }}:</strong> {{ payload.meta.totalVisits }} |
+            <strong>{{ 'GeoPrecision_AvgConfidenceScore'|translate }}:</strong> {{ payload.meta.averageConfidenceScore }}
+        </p>
+
+        <h3>{{ 'GeoPrecision_ConfidenceDistribution'|translate }}</h3>
+
+        <table class="entityTable dataTable">
+            <thead>
+            <tr>
+                <th>{{ 'GeoPrecision_ConfidenceLevel'|translate }}</th>
+                <th>{{ 'General_ColumnNbVisits'|translate }}</th>
+                <th>{{ 'General_Percent'|translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set totalDist = payload.confidenceDistribution.high + payload.confidenceDistribution.medium + payload.confidenceDistribution.low %}
+            {% for level, count in payload.confidenceDistribution %}
+                <tr>
+                    <td>{{ level|capitalize }}</td>
+                    <td>{{ count }}</td>
+                    <td>
+                        {% if totalDist > 0 %}
+                            {{ ((count / totalDist) * 100)|number_format(1, '.', '') }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>{{ 'GeoPrecision_DimensionCoverage'|translate }}</h3>
+
+        <table class="entityTable dataTable">
+            <thead>
+            <tr>
+                <th>{{ 'GeoPrecision_Dimension'|translate }}</th>
+                <th>{{ 'GeoPrecision_KnownCount'|translate }}</th>
+                <th>{{ 'GeoPrecision_UnknownCount'|translate }}</th>
+                <th>{{ 'GeoPrecision_KnownRate'|translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in payload.dimensions %}
+                <tr>
+                    <td>{{ row.dimension }}</td>
+                    <td>{{ row.knownCount }}</td>
+                    <td>{{ row.unknownCount }}</td>
+                    <td>
+                        {% if row.dataPoints > 0 %}
+                            {{ ((row.knownCount / row.dataPoints) * 100)|number_format(1, '.', '') }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">{{ 'General_NoDataForGraph'|translate }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
