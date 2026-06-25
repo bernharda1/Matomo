@@ -6,22 +6,37 @@ namespace Piwik\Plugins\VisitorFlowIntelligence\Infrastructure;
 
 use Piwik\Common;
 use Piwik\Db;
+use Piwik\Plugins\VisitorFlowIntelligence\Service\SegmentProcessor;
 
 final class FlowEventRepository
 {
     /**
-     * @return array<int, array<int, string>>
+     * SB-016: Fetch visit steps with optional segment filtering
+     * 
+     * @param int $idSite
+     * @param string $startDateTime
+     * @param string $endDateTime
+     * @param int $maxDepth Maximum path depth
+     * @param int $maxVisits Maximum visits to fetch
+     * @param string $segment Optional segment filter (e.g., "deviceType==mobile")
+     * 
+     * @return array<int, array<int, string>> Visits keyed by idvisit, values are step arrays
      */
     public function fetchVisitSteps(
         int $idSite,
         string $startDateTime,
         string $endDateTime,
         int $maxDepth,
-        int $maxVisits = 5000
+        int $maxVisits = 5000,
+        string $segment = ''
     ): array {
         $logVisitTable = Common::prefixTable('log_visit');
         $logLinkVisitActionTable = Common::prefixTable('log_link_visit_action');
         $logActionTable = Common::prefixTable('log_action');
+
+        // SB-016: Parse segment and build WHERE clause
+        $segmentProcessor = new SegmentProcessor($segment);
+        $segmentWhere = $segmentProcessor->getWhereClause('lv');
 
         $sql = sprintf(
             'SELECT lva.idvisit, action_url.name AS action_url
@@ -31,13 +46,16 @@ final class FlowEventRepository
              WHERE lv.idsite = ?
                AND lv.visit_last_action_time >= ?
                AND lv.visit_last_action_time <= ?
+               %s
              ORDER BY lva.idvisit ASC, lva.server_time ASC, lva.pageview_position ASC, lva.idlink_va ASC',
             $logLinkVisitActionTable,
             $logVisitTable,
-            $logActionTable
+            $logActionTable,
+            $segmentWhere['where'] ? 'AND ' . substr($segmentWhere['where'], 6) : '' // Remove 'WHERE ' prefix
         );
 
-        $rows = Db::fetchAll($sql, [$idSite, $startDateTime, $endDateTime]);
+        $bindings = array_merge([$idSite, $startDateTime, $endDateTime], $segmentWhere['bind']);
+        $rows = Db::fetchAll($sql, $bindings);
 
         $visitSteps = [];
         foreach ($rows as $row) {

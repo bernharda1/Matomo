@@ -56,9 +56,9 @@ final class API extends PluginApi
 
         $query = new FlowQuery($idSite, $period, $date, $segment, $maxDepth, $limit);
 
-        if (($query->getSegment() ?? '') !== '') {
-            throw new \DomainException('Segment support is not part of SB-005 MVP yet.');
-        }
+        // SB-016: Segment support now enabled
+        // Supported segments: deviceType, browserName, country, osName, visitDuration, actions
+        // Examples: "deviceType==mobile", "country==DE;browserName==Chrome"
 
         // SB-015: Check cache first
         $cached = $this->cacheManager->get(
@@ -80,7 +80,9 @@ final class API extends PluginApi
             $query->getIdSite(),
             $startDateTime,
             $endDateTime,
-            $query->getMaxDepth()
+            $query->getMaxDepth(),
+            5000,
+            $query->getSegment() ?? ''  // SB-016: Pass segment to repository
         );
 
         $aggregator = new FlowPathAggregator();
