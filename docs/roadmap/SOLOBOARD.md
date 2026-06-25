@@ -60,29 +60,29 @@ Board-Regeln:
 - [x] SB-012 Betriebsdoku + Release-Checkliste v1.0
   - Ergebnis: `INSTALLATION_GUIDE.md`, `RUNBOOK.md`, `RELEASE_CHECKLIST.md`, `HEALTH_CHECK.md`, `TROUBLESHOOTING.md`
 
-## Diese Woche - Taktplan (Solo)
+### Phase 2 (Hardening & Optimization)
 
-Tag 1:
+- [x] SB-013 Database Layer Optimization
+  - Ergebnis: 3 raw data tables (plugin_visitorflow_raw, plugin_geoprecision_raw, plugin_deviceintelligence_raw)
+  - Migration infrastructure (MigrationManager, versioning, rollback)
+  - Performance baseline tests (< 500ms P95 target)
+  - PR #1 merged to master
+  - Status: ✅ COMPLETE (2026-06-25)
 
-- SB-001 starten und abschliessen
-- SB-003 starten
+## Diese Woche - Taktplan (Phase 2)
 
-Tag 2:
+Sprint 1 (Week 9-10): SB-013 Database Layer ✅ DONE
 
-- SB-003 abschliessen
-- SB-004 umsetzen
+Sprint 2 (Week 11-12):
+- [ ] SB-014.1-3 Archiver Integration (pre-aggregation logic)
+- [ ] SB-015.1-4 Caching Layer (Redis/Memcached integration)
 
-Tag 3:
+Sprint 3 (Week 12-13):
+- [ ] SB-016 Segment Support (enable dimension filtering)
 
-- SB-005 umsetzen
-
-Tag 4:
-
-- SB-006 umsetzen
-
-Tag 5:
-
-- Stabilisieren, testen, Dokumentation aktualisieren
+Sprint 4 (Week 13-14):
+- [ ] SB-017 Automated Testing (PHPUnit + CI/CD)
+- [ ] SB-018 Security Hardening (OWASP compliance)
 
 ## Retro-Notizen
 
